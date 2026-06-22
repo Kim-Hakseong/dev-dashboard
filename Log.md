@@ -16,3 +16,7 @@
 - 엣지케이스 확인: Log.md 없음/frontmatter 누락/커밋0/마일스톤0/Supabase 미설정 폴백 코드로 보장
 - 로컬 검증: build_data.py 실행 → data.json 생성, 정적 서버 6개 자산 200 OK, JS 4개 node --check 통과, 시크릿 누출 0건
 - README 갱신: 실제 파일 구조·OWNER 치환 위치·venv 로컬 테스트·단위 검증 커맨드 반영
+- 배포: owner=Kim-Hakseong public repo 생성/push, GitHub Pages(Actions) 활성화 → https://kim-hakseong.github.io/dev-dashboard/ 라이브
+- 프로젝트 Log.md SSOT 블록 추가: nexys/flight-sim2 각 Log.md 상단에 frontmatter+마일스톤+날짜 섹션 prepend(원본 보존) → 카드 실데이터 채움
+- nexys 데모 URL을 Vercel(nexys-blockly-studio.vercel.app)로, flight-sim2는 GitHub Pages로 연결
+- UI 노션 스타일 리디자인: 라이트 테마, 픽토그램/이모지, 개요 콜아웃, SVG 진행률 도넛 링, 5단계 파이프라인 스테퍼, 마일스톤 체크리스트, 토글, 통계 스트립. Chrome 헤드리스로 데스크탑/모바일 렌더 검증. DESIGN.md §6 갱신

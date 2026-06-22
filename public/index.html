@@ -5,75 +5,185 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>개발 진행 대시보드</title>
   <style>
+    /* ===== 노션 스타일 디자인 시스템 (라이트, 픽토그램·콜아웃·인포그래픽) ===== */
     :root{
-      --bg:#0e1116; --card:#161b22; --border:#30363d;
-      --text:#e6edf3; --sub:#8b949e; --track:#21262d; --danger:#f85149;
+      --bg:#ffffff; --bg-sub:#f7f6f3; --card:#ffffff;
+      --text:#37352f; --sub:#787774; --faint:#9b9a97;
+      --border:#ebeae8; --border-strong:#e0dfdb; --track:#eceae5;
+      --hover:#f1f0ee; --danger:#e03e3e; --danger-bg:#fdebec;
+      --shadow:0 1px 2px rgba(15,15,15,.04), 0 2px 8px rgba(15,15,15,.04);
+      --radius:14px;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
-    header{padding:20px 24px;border-bottom:1px solid var(--border);
-      display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;}
-    header h1{font-size:18px;margin:0}
-    #meta{color:var(--sub);font-size:13px}
-    #status{margin-left:auto;color:var(--sub);font-size:12px}
-    #grid{display:grid;grid-template-columns:1fr;gap:16px;padding:20px;max-width:1200px;margin:0 auto}
-    @media(min-width:880px){#grid{grid-template-columns:1fr 1fr}}
-    .card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--accent);
-      border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+    html{-webkit-text-size-adjust:100%}
+    body{margin:0;background:var(--bg);color:var(--text);line-height:1.5;
+      font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",
+        "Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;}
+    a{color:inherit}
+
+    /* ---- 페이지 헤더 (노션 페이지 타이틀 느낌) ---- */
+    .page{max-width:1160px;margin:0 auto;padding:0 22px 60px}
+    .cover{height:120px;border-radius:0 0 var(--radius) var(--radius);
+      background:linear-gradient(120deg,#f7f6f3 0%,#efece6 50%,#f3eef6 100%);
+      margin:0 -22px 0;}
+    .page-head{margin-top:-44px;padding:0 4px 8px}
+    .page-emoji{font-size:56px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.06))}
+    .page-title{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:10px 0 4px}
+    .page-desc{color:var(--sub);font-size:15px;margin:0;max-width:680px}
+
+    /* ---- 상단 통계 인포그래픽 스트립 ---- */
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:22px 0 8px}
+    @media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
+    .stat{background:var(--bg-sub);border:1px solid var(--border);border-radius:12px;
+      padding:14px 16px;display:flex;align-items:center;gap:12px}
+    .stat .ic{font-size:22px}
+    .stat .v{font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+    .stat .k{font-size:12px;color:var(--sub);margin-top:2px}
+    .stat .ring{flex:0 0 auto}
+
+    #status{color:var(--faint);font-size:12.5px;margin:6px 4px 0;display:flex;align-items:center;gap:6px}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;box-shadow:0 0 0 3px #4caf5022}
+
+    /* ---- 프로젝트 그리드 ---- */
+    #grid{display:grid;grid-template-columns:1fr;gap:20px;margin-top:18px}
+    @media(min-width:900px){#grid{grid-template-columns:1fr 1fr}}
+
+    .card{background:var(--card);border:1px solid var(--border-strong);border-radius:var(--radius);
+      padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+
+    .card-head{display:flex;gap:14px;align-items:flex-start}
+    .proj-emoji{font-size:34px;line-height:1;flex:0 0 auto;
+      width:58px;height:58px;display:grid;place-items:center;border-radius:14px;
+      background:var(--accent-soft)}
+    .head-main{flex:1;min-width:0}
     .title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .title-row h2{font-size:16px;margin:0}
-    .dot{width:9px;height:9px;border-radius:50%}
-    .badge{font-size:11px;color:#0d1117;padding:2px 8px;border-radius:999px;font-weight:700}
-    .stale{color:var(--danger);font-size:11px}
-    .links{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-top:6px}
-    .links a{color:var(--sub);text-decoration:none}
-    .links a:hover{color:var(--text);text-decoration:underline}
-    .summary{margin:0;color:var(--sub);font-size:13px;line-height:1.5}
-    .err{background:#3d1d00;border:1px solid #db6d28;color:#ffb877;padding:8px;border-radius:6px;font-size:12px}
-    .bar{height:8px;background:var(--track);border-radius:999px;overflow:hidden}
-    .bar span{display:block;height:100%}
-    .prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:6px}
-    .milestones{display:flex;flex-direction:column;gap:4px;font-size:13px}
-    .ms{color:var(--sub)} .ms.done{color:var(--text)}
-    .collapsible summary{cursor:pointer;font-size:13px;color:var(--sub);padding:4px 0}
-    .timeline{display:flex;flex-direction:column;gap:10px;font-size:13px}
-    .tl-date{color:var(--sub);font-size:12px;margin-bottom:2px}
-    .timeline ul{margin:0;padding-left:18px} .timeline li{line-height:1.5}
+    .title-row h2{font-size:20px;font-weight:800;margin:0;letter-spacing:-.01em}
+    .select{font-size:12.5px;font-weight:600;padding:2px 10px;border-radius:999px;
+      display:inline-flex;align-items:center;gap:5px}
+    .stale{display:inline-flex;align-items:center;gap:4px;color:var(--danger);
+      background:var(--danger-bg);font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px}
+    .fresh{color:var(--sub);font-size:12px}
+
+    /* ---- 콜아웃 (노션 callout) — 프로젝트 개요 ---- */
+    .callout{display:flex;gap:10px;background:var(--bg-sub);border:1px solid var(--border);
+      border-radius:10px;padding:12px 14px;font-size:14px}
+    .callout .c-ic{font-size:18px;flex:0 0 auto}
+    .callout .c-body{color:var(--text)}
+    .callout .c-body .c-k{font-size:11px;font-weight:700;color:var(--faint);
+      text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+
+    .err{display:flex;gap:8px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;
+      padding:10px 12px;border-radius:10px;font-size:13px}
+
+    /* ---- 인포그래픽: 진행률 링 + 단계 파이프라인 ---- */
+    .info-row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+    .ring-wrap{display:flex;align-items:center;gap:12px}
+    .ring text.ring-label{font-size:15px;font-weight:800;fill:var(--text)}
+    .ring-meta .rk{font-size:12px;color:var(--sub)}
+    .ring-meta .rv{font-size:13px;font-weight:700}
+
+    .stepper{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:220px}
+    .step{flex:1;min-width:54px;text-align:center;border-radius:8px;padding:7px 4px;
+      background:var(--bg-sub);border:1px solid var(--border);position:relative}
+    .step .s-ic{font-size:15px;display:block;line-height:1.2;filter:grayscale(1);opacity:.5}
+    .step .s-lb{font-size:10.5px;color:var(--faint);font-weight:600;margin-top:1px}
+    .step.done{background:#f0f4f0;border-color:#d8e6d6}
+    .step.done .s-ic{filter:none;opacity:.85} .step.done .s-lb{color:var(--sub)}
+    .step.current{background:var(--accent-soft);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+    .step.current .s-ic{filter:none;opacity:1} .step.current .s-lb{color:var(--accent);font-weight:800}
+
+    /* ---- 마일스톤 체크리스트 (노션 to-do) ---- */
+    .section-label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+      color:var(--sub);margin:0 0 4px}
+    .ms-bar{height:7px;background:var(--track);border-radius:999px;overflow:hidden;margin:2px 0 8px}
+    .ms-bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+    .milestones{display:flex;flex-direction:column;gap:5px}
+    .ms{display:flex;align-items:flex-start;gap:8px;font-size:14px;color:var(--text)}
+    .ms .box{flex:0 0 auto;width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border-strong);
+      display:grid;place-items:center;font-size:11px;margin-top:2px;color:#fff}
+    .ms.done .box{background:var(--accent);border-color:var(--accent)}
+    .ms.done .txt{color:var(--faint);text-decoration:line-through}
+
+    /* ---- 다이렉트 링크 (노션 북마크/버튼) ---- */
+    .links{display:flex;gap:8px;flex-wrap:wrap}
+    .lnk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;
+      text-decoration:none;color:var(--text);background:var(--bg-sub);
+      border:1px solid var(--border);border-radius:8px;padding:6px 11px;transition:background .12s}
+    .lnk:hover{background:var(--hover)}
+    .lnk .li{font-size:14px}
+
+    /* ---- 토글 (노션 toggle) — 로그 / 커밋 ---- */
+    details.toggle{border-top:1px solid var(--border);padding-top:10px}
+    details.toggle>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:7px;
+      font-size:13px;font-weight:700;color:var(--sub);padding:2px 0}
+    details.toggle>summary::-webkit-details-marker{display:none}
+    details.toggle>summary .tw{transition:transform .15s;display:inline-block;color:var(--faint)}
+    details.toggle[open]>summary .tw{transform:rotate(90deg)}
+    .toggle-body{padding:8px 0 2px 4px}
+
+    .timeline{display:flex;flex-direction:column;gap:12px}
+    .tl-entry{padding-left:14px;border-left:2px solid var(--border-strong);position:relative}
+    .tl-entry::before{content:"";position:absolute;left:-5px;top:5px;width:8px;height:8px;
+      border-radius:50%;background:var(--accent)}
+    .tl-date{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:3px}
+    .timeline ul{margin:0;padding-left:16px} .timeline li{font-size:13.5px;line-height:1.55}
+    .empty{color:var(--faint);font-size:13px}
+
     .commits{display:flex;flex-direction:column}
-    .commit{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);
-      text-decoration:none;color:var(--text);font-size:13px}
+    .commit{display:flex;gap:9px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);
+      text-decoration:none;color:var(--text);font-size:13.5px}
     .commit:last-child{border-bottom:none}
-    .commit code{color:#58a6ff;font-size:12px}
+    .commit code{color:#6940a5;background:#f4f0f8;font-size:12px;padding:1px 6px;border-radius:5px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
     .cmsg{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .cmeta{color:var(--sub);font-size:11px;white-space:nowrap}
-    .feedback{border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:8px}
-    .fb-label{font-size:13px;font-weight:600;color:var(--sub)}
-    .fb-warn{font-size:12px;color:#db6d28}
-    .fb-form{display:flex;gap:6px;flex-wrap:wrap}
-    .fb-form input,.fb-form select{background:#0d1117;border:1px solid var(--border);
-      color:var(--text);border-radius:6px;padding:6px 8px;font-size:13px}
-    .fb-author{width:90px} .fb-body{flex:1;min-width:140px}
-    .fb-submit{background:var(--accent);border:none;color:#fff;border-radius:6px;
-      padding:6px 14px;font-size:13px;cursor:pointer;font-weight:600}
-    .fb-submit:disabled{opacity:.5}
-    .fb-list{display:flex;flex-direction:column;gap:6px}
-    .fb-empty{color:var(--sub);font-size:12px}
-    .fb-item{background:#0d1117;border:1px solid var(--border);border-radius:6px;
-      padding:8px;font-size:13px;position:relative}
-    .fb-item.status-done{opacity:.6} .fb-item.status-wontfix{opacity:.45}
-    .fb-meta{color:var(--sub);font-size:11px;margin-bottom:4px}
-    .fb-status{position:absolute;top:6px;right:6px;background:transparent;border:1px solid var(--border);
-      color:var(--sub);border-radius:999px;font-size:10px;padding:2px 8px;cursor:pointer}
+    .cmeta{color:var(--faint);font-size:11.5px;white-space:nowrap}
+
+    /* ---- 피드백 (노션 코멘트) ---- */
+    .feedback{border-top:1px solid var(--border);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+    .fb-warn{font-size:12.5px;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;
+      padding:8px 11px;border-radius:8px}
+    .fb-form{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+    .fb-form input,.fb-form select{background:#fff;border:1px solid var(--border-strong);
+      color:var(--text);border-radius:8px;padding:8px 10px;font-size:13.5px;font-family:inherit}
+    .fb-form input:focus,.fb-form select:focus{outline:none;border-color:var(--accent);
+      box-shadow:0 0 0 3px var(--accent-soft)}
+    .fb-author{width:96px} .fb-body{flex:1;min-width:150px}
+    .fb-submit{background:var(--accent);border:none;color:#fff;border-radius:8px;
+      padding:8px 16px;font-size:13.5px;cursor:pointer;font-weight:700;font-family:inherit}
+    .fb-submit:hover{filter:brightness(1.06)} .fb-submit:disabled{opacity:.5;cursor:default}
+    .fb-list{display:flex;flex-direction:column;gap:8px}
+    .fb-empty{color:var(--faint);font-size:13px}
+    .fb-item{background:var(--bg-sub);border:1px solid var(--border);border-radius:10px;
+      padding:10px 12px;font-size:13.5px;position:relative}
+    .fb-item.status-done{opacity:.65} .fb-item.status-wontfix{opacity:.5}
+    .fb-meta{color:var(--sub);font-size:11.5px;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+    .fb-avatar{width:18px;height:18px;border-radius:50%;background:var(--accent-soft);
+      color:var(--accent);display:grid;place-items:center;font-size:10px;font-weight:800}
+    .fb-status{position:absolute;top:8px;right:8px;background:#fff;border:1px solid var(--border-strong);
+      color:var(--sub);border-radius:999px;font-size:10.5px;padding:2px 9px;cursor:pointer;font-weight:600}
+    .fb-status:hover{background:var(--hover)}
+
+    footer{max-width:1160px;margin:0 auto;padding:8px 22px 40px;color:var(--faint);font-size:12px}
+    footer code{background:var(--bg-sub);border:1px solid var(--border);border-radius:5px;padding:1px 5px;
+      font-family:ui-monospace,Menlo,monospace}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🛠 개발 진행 대시보드</h1>
-    <span id="meta">불러오는 중…</span>
-    <span id="status"></span>
-  </header>
-  <main id="grid"></main>
+  <div class="page">
+    <div class="cover"></div>
+    <div class="page-head">
+      <div class="page-emoji">🛠️</div>
+      <h1 class="page-title">개발 진행 대시보드</h1>
+      <p class="page-desc">두 개발 프로젝트의 진행 상황을 Log.md 기반으로 집계하고, 팀과 실시간 피드백을 주고받습니다.</p>
+    </div>
+
+    <section class="stats" id="stats"></section>
+    <div id="status"></div>
+
+    <main id="grid"></main>
+  </div>
+  <footer>데이터는 GitHub Actions가 각 프로젝트의 <code>Log.md</code> + 커밋에서 자동 집계합니다 · 60초마다 갱신</footer>
 
   <script src="./config.js"></script>
   <script type="module" src="./app.js"></script>
