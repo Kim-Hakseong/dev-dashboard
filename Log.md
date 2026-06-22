@@ -21,3 +21,4 @@
 - nexys 데모 URL을 Vercel(nexys-blockly-studio.vercel.app)로, flight-sim2는 GitHub Pages로 연결
 - UI 노션 스타일 리디자인: 라이트 테마, 픽토그램/이모지, 개요 콜아웃, SVG 진행률 도넛 링, 5단계 파이프라인 스테퍼, 마일스톤 체크리스트, 토글, 통계 스트립. Chrome 헤드리스로 데스크탑/모바일 렌더 검증. DESIGN.md §6 갱신
 - 피드백 백엔드를 Giscus(GitHub Discussions)로 전환: config.js feedbackBackend 스위치(giscus|supabase), 프로젝트별 토론 스레드(data-term) 임베드, dev-dashboard repo Discussions 활성화 + repoId/categoryId 연결. Supabase 어댑터 경로는 보존
+- 피드백을 Discussions 링크 방식으로 전환(설치/키 0): 프로젝트별 토론 스레드(#1 nexys, #2 flight-sim2) API로 생성, 카드에 "피드백 남기러 가기" CTA 버튼. config.js feedbackBackend "discussions" 기본값, giscus/supabase 경로는 스위치로 보존

@@ -3,8 +3,11 @@ import { createSupabaseAdapter } from "./feedback-supabase.js";
 import { createNullAdapter } from "./feedback-adapter.js";
 
 const CFG = window.DASHBOARD_CONFIG || {};
-// 피드백 백엔드 모드: "giscus"(GitHub Discussions) | "supabase"(익명·실시간)
-const FB_MODE = (CFG.feedbackBackend === "giscus" && CFG.giscus?.repoId) ? "giscus" : "supabase";
+// 피드백 백엔드 모드: "discussions"(링크 버튼) | "giscus"(인라인) | "supabase"(익명·실시간)
+const FB_MODE =
+  CFG.feedbackBackend === "discussions" ? "discussions" :
+  (CFG.feedbackBackend === "giscus" && CFG.giscus?.repoId) ? "giscus" :
+  "supabase";
 // 피드백 어댑터는 init()에서 비동기로 교체된다(supabase 모드, 동적 import 폴백).
 // 그 전에 호출돼도 안전하도록 null 어댑터로 시작한다.
 let feedback = createNullAdapter("피드백 초기화 중…");
@@ -118,7 +121,7 @@ function renderStats(data) {
   const ps = data.projects;
   const avg = ps.length ? Math.round(ps.reduce((s, p) => s + (p.progress || 0), 0) / ps.length) : 0;
   const open = openFeedbackCount();
-  const fbStat = FB_MODE === "giscus"
+  const fbStat = FB_MODE !== "supabase"
     ? `<div class="stat"><span class="ic">💬</span><div><div class="v" style="font-size:15px">Discussions</div><div class="k">피드백 (GitHub)</div></div></div>`
     : `<div class="stat"><span class="ic">💬</span><div><div class="v" id="stat-open">${open}</div><div class="k">open 피드백</div></div></div>`;
   $("#stats").innerHTML = `
@@ -273,7 +276,33 @@ function toggle(label, content, open) {
   return det;
 }
 
-// ---------- 피드백: Giscus (GitHub Discussions) ----------
+// ---------- 피드백: Discussions 링크 (설치/키 불필요, 가장 간단) ----------
+// 프로젝트별 GitHub 토론 스레드로 이동하는 버튼. 누구나 GitHub 계정으로 댓글 작성.
+function discussionsBlock(projectId, projectName) {
+  const d = CFG.discussions || {};
+  const url = (d.byProject && d.byProject[projectId]) || d.base || "";
+  const box = el("div", "feedback");
+  box.dataset.project = projectId;
+  box.appendChild(el("div", "section-label", "💬 피드백"));
+
+  const co = el("div", "callout");
+  co.innerHTML = `<span class="c-ic">🗳️</span>
+    <div class="c-body"><span class="c-k">GitHub Discussions</span>
+    ${esc(projectName)}에 대한 의견·제안·버그를 남겨주세요. 누구나 GitHub 계정으로 댓글을 달 수 있어요.</div>`;
+  box.appendChild(co);
+
+  if (url) {
+    const cta = el("a", "lnk fb-cta");
+    cta.href = url; cta.target = "_blank"; cta.rel = "noopener";
+    cta.innerHTML = `<span class="li">✍️</span> 피드백 남기러 가기 ↗`;
+    box.appendChild(cta);
+  } else {
+    box.appendChild(el("div", "fb-warn", "⚠️ Discussions URL이 설정되지 않았습니다 (config.js의 discussions 확인)"));
+  }
+  return box;
+}
+
+// ---------- 피드백: Giscus (GitHub Discussions 인라인 임베드) ----------
 // 프로젝트마다 별도 토론 스레드(data-term)로 임베드 → 카드 안에서 게시판처럼 사용.
 function giscusBlock(projectId, projectName) {
   const g = CFG.giscus || {};
@@ -315,7 +344,7 @@ function giscusBlock(projectId, projectName) {
 
 // ---------- 피드백: Supabase (익명·실시간) ----------
 function feedbackBlock(projectId, projectName) {
-  // Giscus(GitHub Discussions) 모드 → 프로젝트별 토론 스레드 임베드
+  if (FB_MODE === "discussions") return discussionsBlock(projectId, projectName);
   if (FB_MODE === "giscus") return giscusBlock(projectId, projectName);
 
   const box = el("div", "feedback");
