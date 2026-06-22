@@ -20,3 +20,4 @@
 - 프로젝트 Log.md SSOT 블록 추가: nexys/flight-sim2 각 Log.md 상단에 frontmatter+마일스톤+날짜 섹션 prepend(원본 보존) → 카드 실데이터 채움
 - nexys 데모 URL을 Vercel(nexys-blockly-studio.vercel.app)로, flight-sim2는 GitHub Pages로 연결
 - UI 노션 스타일 리디자인: 라이트 테마, 픽토그램/이모지, 개요 콜아웃, SVG 진행률 도넛 링, 5단계 파이프라인 스테퍼, 마일스톤 체크리스트, 토글, 통계 스트립. Chrome 헤드리스로 데스크탑/모바일 렌더 검증. DESIGN.md §6 갱신
+- 피드백 백엔드를 Giscus(GitHub Discussions)로 전환: config.js feedbackBackend 스위치(giscus|supabase), 프로젝트별 토론 스레드(data-term) 임베드, dev-dashboard repo Discussions 활성화 + repoId/categoryId 연결. Supabase 어댑터 경로는 보존

@@ -163,6 +163,7 @@
     .fb-status{position:absolute;top:8px;right:8px;background:#fff;border:1px solid var(--border-strong);
       color:var(--sub);border-radius:999px;font-size:10.5px;padding:2px 9px;cursor:pointer;font-weight:600}
     .fb-status:hover{background:var(--hover)}
+    .giscus-mount{min-height:46px}
 
     footer{max-width:1160px;margin:0 auto;padding:8px 22px 40px;color:var(--faint);font-size:12px}
     footer code{background:var(--bg-sub);border:1px solid var(--border);border-radius:5px;padding:1px 5px;
@@ -184,7 +185,7 @@
     <main id="grid"></main>
   </div>
   <footer>데이터는 GitHub Actions가 각 프로젝트의 <code>Log.md</code> + 커밋에서 자동 집계합니다.<br>
-    브라우저는 <b>60초마다</b> 최신 데이터를 확인하고, 데이터 자체는 빌드가 돌 때 갱신됩니다(프로젝트 푸시 시 즉시 / 백업 cron 15분). 피드백은 Supabase Realtime으로 실시간 반영.</footer>
+    브라우저는 <b>60초마다</b> 최신 데이터를 확인하고, 데이터 자체는 빌드가 돌 때 갱신됩니다(프로젝트 푸시 시 즉시 / 백업 cron 15분). 피드백은 GitHub Discussions(giscus) 기반.</footer>
 
   <script src="./config.js"></script>
   <script type="module" src="./app.js"></script>

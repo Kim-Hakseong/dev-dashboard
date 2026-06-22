@@ -3,7 +3,9 @@ import { createSupabaseAdapter } from "./feedback-supabase.js";
 import { createNullAdapter } from "./feedback-adapter.js";
 
 const CFG = window.DASHBOARD_CONFIG || {};
-// 피드백 어댑터는 init()에서 비동기로 교체된다(동적 import 폴백을 위해).
+// 피드백 백엔드 모드: "giscus"(GitHub Discussions) | "supabase"(익명·실시간)
+const FB_MODE = (CFG.feedbackBackend === "giscus" && CFG.giscus?.repoId) ? "giscus" : "supabase";
+// 피드백 어댑터는 init()에서 비동기로 교체된다(supabase 모드, 동적 import 폴백).
 // 그 전에 호출돼도 안전하도록 null 어댑터로 시작한다.
 let feedback = createNullAdapter("피드백 초기화 중…");
 
@@ -116,11 +118,14 @@ function renderStats(data) {
   const ps = data.projects;
   const avg = ps.length ? Math.round(ps.reduce((s, p) => s + (p.progress || 0), 0) / ps.length) : 0;
   const open = openFeedbackCount();
+  const fbStat = FB_MODE === "giscus"
+    ? `<div class="stat"><span class="ic">💬</span><div><div class="v" style="font-size:15px">Discussions</div><div class="k">피드백 (GitHub)</div></div></div>`
+    : `<div class="stat"><span class="ic">💬</span><div><div class="v" id="stat-open">${open}</div><div class="k">open 피드백</div></div></div>`;
   $("#stats").innerHTML = `
     <div class="stat"><span class="ic">📁</span><div><div class="v">${ps.length}</div><div class="k">프로젝트</div></div></div>
     <div class="stat">${progressRing(avg, "#0b6e99", 48)}<div><div class="k">평균 진행률</div></div></div>
     <div class="stat"><span class="ic">🕐</span><div><div class="v" style="font-size:15px">${esc(relativeTime(data.generated_at) || "—")}</div><div class="k">마지막 갱신</div></div></div>
-    <div class="stat"><span class="ic">💬</span><div><div class="v" id="stat-open">${open}</div><div class="k">open 피드백</div></div></div>`;
+    ${fbStat}`;
 }
 function refreshOpenStat() {
   const node = $("#stat-open");
@@ -198,7 +203,7 @@ function renderCard(p, staleDays) {
   card.appendChild(toggle("🔧 최근 커밋", commits(p.commits), false));
 
   // 피드백
-  card.appendChild(feedbackBlock(p.id));
+  card.appendChild(feedbackBlock(p.id, p.name));
   return card;
 }
 
@@ -268,8 +273,51 @@ function toggle(label, content, open) {
   return det;
 }
 
-// ---------- 피드백 ----------
-function feedbackBlock(projectId) {
+// ---------- 피드백: Giscus (GitHub Discussions) ----------
+// 프로젝트마다 별도 토론 스레드(data-term)로 임베드 → 카드 안에서 게시판처럼 사용.
+function giscusBlock(projectId, projectName) {
+  const g = CFG.giscus || {};
+  const box = el("div", "feedback");
+  box.dataset.project = projectId;
+  box.appendChild(el("div", "section-label", "💬 피드백 · GitHub Discussions"));
+
+  if (!g.repoId || !g.categoryId) {
+    box.appendChild(el("div", "fb-warn",
+      "⚠️ giscus 설정이 비어 있습니다 (config.js의 giscus.repoId / categoryId 확인)"));
+    return box;
+  }
+
+  const mount = el("div", "giscus-mount");
+  box.appendChild(mount);
+  const s = document.createElement("script");
+  s.src = "https://giscus.app/client.js";
+  const attrs = {
+    "data-repo": g.repo,
+    "data-repo-id": g.repoId,
+    "data-category": g.category || "General",
+    "data-category-id": g.categoryId,
+    "data-mapping": "specific",                 // 프로젝트별 고정 term
+    "data-term": `${projectName} 피드백`,
+    "data-strict": "0",
+    "data-reactions-enabled": "1",
+    "data-emit-metadata": "0",
+    "data-input-position": "top",               // 입력창을 위로 (게시판 느낌)
+    "data-theme": g.theme || "light",
+    "data-lang": g.lang || "ko",
+    "data-loading": "lazy",
+  };
+  Object.entries(attrs).forEach(([k, v]) => v != null && s.setAttribute(k, v));
+  s.crossOrigin = "anonymous";
+  s.async = true;
+  mount.appendChild(s);
+  return box;
+}
+
+// ---------- 피드백: Supabase (익명·실시간) ----------
+function feedbackBlock(projectId, projectName) {
+  // Giscus(GitHub Discussions) 모드 → 프로젝트별 토론 스레드 임베드
+  if (FB_MODE === "giscus") return giscusBlock(projectId, projectName);
+
   const box = el("div", "feedback");
   box.dataset.project = projectId;
   const count = (fbCache[projectId] || []).length;
@@ -353,8 +401,11 @@ function wireRealtime() {
 
 // ---------- 부트 ----------
 async function init() {
-  // 피드백 백엔드 연결 시도(실패해도 null 어댑터로 폴백 → 카드/커밋/로그는 정상).
-  feedback = await createSupabaseAdapter(CFG);
+  // supabase 모드일 때만 어댑터 연결 시도(실패해도 폴백 → 카드/커밋/로그는 정상).
+  // giscus 모드는 카드 렌더 시 토론 스레드를 직접 임베드한다.
+  if (FB_MODE === "supabase") {
+    feedback = await createSupabaseAdapter(CFG);
+  }
   await loadData();
   wireRealtime();
   setInterval(loadData, CFG.pollMs || 60000);
