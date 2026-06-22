@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>개발 진행 대시보드</title>
+  <style>
+    :root{
+      --bg:#0e1116; --card:#161b22; --border:#30363d;
+      --text:#e6edf3; --sub:#8b949e; --track:#21262d; --danger:#f85149;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+    header{padding:20px 24px;border-bottom:1px solid var(--border);
+      display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;}
+    header h1{font-size:18px;margin:0}
+    #meta{color:var(--sub);font-size:13px}
+    #status{margin-left:auto;color:var(--sub);font-size:12px}
+    #grid{display:grid;grid-template-columns:1fr;gap:16px;padding:20px;max-width:1200px;margin:0 auto}
+    @media(min-width:880px){#grid{grid-template-columns:1fr 1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--accent);
+      border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .title-row h2{font-size:16px;margin:0}
+    .dot{width:9px;height:9px;border-radius:50%}
+    .badge{font-size:11px;color:#0d1117;padding:2px 8px;border-radius:999px;font-weight:700}
+    .stale{color:var(--danger);font-size:11px}
+    .links{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin-top:6px}
+    .links a{color:var(--sub);text-decoration:none}
+    .links a:hover{color:var(--text);text-decoration:underline}
+    .summary{margin:0;color:var(--sub);font-size:13px;line-height:1.5}
+    .err{background:#3d1d00;border:1px solid #db6d28;color:#ffb877;padding:8px;border-radius:6px;font-size:12px}
+    .bar{height:8px;background:var(--track);border-radius:999px;overflow:hidden}
+    .bar span{display:block;height:100%}
+    .prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:6px}
+    .milestones{display:flex;flex-direction:column;gap:4px;font-size:13px}
+    .ms{color:var(--sub)} .ms.done{color:var(--text)}
+    .collapsible summary{cursor:pointer;font-size:13px;color:var(--sub);padding:4px 0}
+    .timeline{display:flex;flex-direction:column;gap:10px;font-size:13px}
+    .tl-date{color:var(--sub);font-size:12px;margin-bottom:2px}
+    .timeline ul{margin:0;padding-left:18px} .timeline li{line-height:1.5}
+    .commits{display:flex;flex-direction:column}
+    .commit{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);
+      text-decoration:none;color:var(--text);font-size:13px}
+    .commit:last-child{border-bottom:none}
+    .commit code{color:#58a6ff;font-size:12px}
+    .cmsg{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .cmeta{color:var(--sub);font-size:11px;white-space:nowrap}
+    .feedback{border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+    .fb-label{font-size:13px;font-weight:600;color:var(--sub)}
+    .fb-warn{font-size:12px;color:#db6d28}
+    .fb-form{display:flex;gap:6px;flex-wrap:wrap}
+    .fb-form input,.fb-form select{background:#0d1117;border:1px solid var(--border);
+      color:var(--text);border-radius:6px;padding:6px 8px;font-size:13px}
+    .fb-author{width:90px} .fb-body{flex:1;min-width:140px}
+    .fb-submit{background:var(--accent);border:none;color:#fff;border-radius:6px;
+      padding:6px 14px;font-size:13px;cursor:pointer;font-weight:600}
+    .fb-submit:disabled{opacity:.5}
+    .fb-list{display:flex;flex-direction:column;gap:6px}
+    .fb-empty{color:var(--sub);font-size:12px}
+    .fb-item{background:#0d1117;border:1px solid var(--border);border-radius:6px;
+      padding:8px;font-size:13px;position:relative}
+    .fb-item.status-done{opacity:.6} .fb-item.status-wontfix{opacity:.45}
+    .fb-meta{color:var(--sub);font-size:11px;margin-bottom:4px}
+    .fb-status{position:absolute;top:6px;right:6px;background:transparent;border:1px solid var(--border);
+      color:var(--sub);border-radius:999px;font-size:10px;padding:2px 8px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛠 개발 진행 대시보드</h1>
+    <span id="meta">불러오는 중…</span>
+    <span id="status"></span>
+  </header>
+  <main id="grid"></main>
+
+  <script src="./config.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

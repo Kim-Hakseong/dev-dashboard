@@ -1,0 +1,12 @@
+{
+  "github_owner": "OWNER",
+  "dashboard_repo": "dev-dashboard",
+  "log_branch": "main",
+  "max_entries": 5,
+  "max_commits": 8,
+  "stale_days": 7,
+  "projects": [
+    { "id": "nexys-blockly", "repo": "nexys-blockly-studio", "log_path": "Log.md" },
+    { "id": "flight-sim2",   "repo": "flight-sim2",          "log_path": "Log.md" }
+  ]
+}

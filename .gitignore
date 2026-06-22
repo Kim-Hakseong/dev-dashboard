@@ -1,0 +1,15 @@
+# 데이터는 Actions가 매 빌드 생성 (커밋 불필요)
+public/data.json
+
+# 환경/비밀
+.env
+*.local
+
+# OS / 에디터
+.DS_Store
+.vscode/
+__pycache__/
+*.pyc
+
+# 로컬 파이썬 가상환경 (로컬 테스트 전용, 배포 불필요)
+.venv/
