@@ -272,7 +272,9 @@ function toggle(label, content, open) {
 function feedbackBlock(projectId) {
   const box = el("div", "feedback");
   box.dataset.project = projectId;
-  box.appendChild(el("div", "section-label", "💬 피드백"));
+  const count = (fbCache[projectId] || []).length;
+  box.appendChild(el("div", "section-label",
+    `💬 피드백${feedback.available && count ? ` (${count})` : ""}`));
 
   if (!feedback.available) {
     box.appendChild(el("div", "fb-warn", "⚠️ " + esc(feedback.reason || "피드백 백엔드 미연결")));

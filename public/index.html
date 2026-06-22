@@ -183,7 +183,8 @@
 
     <main id="grid"></main>
   </div>
-  <footer>데이터는 GitHub Actions가 각 프로젝트의 <code>Log.md</code> + 커밋에서 자동 집계합니다 · 60초마다 갱신</footer>
+  <footer>데이터는 GitHub Actions가 각 프로젝트의 <code>Log.md</code> + 커밋에서 자동 집계합니다.<br>
+    브라우저는 <b>60초마다</b> 최신 데이터를 확인하고, 데이터 자체는 빌드가 돌 때 갱신됩니다(프로젝트 푸시 시 즉시 / 백업 cron 15분). 피드백은 Supabase Realtime으로 실시간 반영.</footer>
 
   <script src="./config.js"></script>
   <script type="module" src="./app.js"></script>
