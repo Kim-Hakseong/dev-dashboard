@@ -22,3 +22,13 @@
 - UI 노션 스타일 리디자인: 라이트 테마, 픽토그램/이모지, 개요 콜아웃, SVG 진행률 도넛 링, 5단계 파이프라인 스테퍼, 마일스톤 체크리스트, 토글, 통계 스트립. Chrome 헤드리스로 데스크탑/모바일 렌더 검증. DESIGN.md §6 갱신
 - 피드백 백엔드를 Giscus(GitHub Discussions)로 전환: config.js feedbackBackend 스위치(giscus|supabase), 프로젝트별 토론 스레드(data-term) 임베드, dev-dashboard repo Discussions 활성화 + repoId/categoryId 연결. Supabase 어댑터 경로는 보존
 - 피드백을 Discussions 링크 방식으로 전환(설치/키 0): 프로젝트별 토론 스레드(#1 nexys, #2 flight-sim2) API로 생성, 카드에 "피드백 남기러 가기" CTA 버튼. config.js feedbackBackend "discussions" 기본값, giscus/supabase 경로는 스위치로 보존
+- 피드백 방식 확정: **GitHub Discussions 링크 유지**(GitHub 로그인 후 댓글 작성). 익명 입력이 필요해지면 Supabase, 인라인 임베드가 필요해지면 Giscus로 `config.js`의 `feedbackBackend` 한 줄만 바꾸면 전환됨
+
+### 현재 상태 스냅샷 (2026-06-22 기준)
+- **라이브 대시보드**: https://kim-hakseong.github.io/dev-dashboard/ (GitHub Pages, Actions 배포)
+- **데이터 파이프라인**: 각 프로젝트 repo의 `Log.md`(frontmatter+마일스톤+날짜) + 커밋 → `build_data.py` → `public/data.json`. 자동 갱신은 cron `*/15` 백업(프로젝트 repo에 notify 워크플로 미설치 상태). 브라우저는 60초 폴링.
+- **추적 프로젝트**: ① Nexys Blockly Studio — 베타·진행률 70%, 데모 https://nexys-blockly-studio.vercel.app/ ② Flight Sim2 — 베타·진행률 85%, 데모 https://kim-hakseong.github.io/flight-sim2/
+- **UI**: 노션 라이트 스타일(픽토그램·개요 콜아웃·진행률 도넛 링·5단계 파이프라인 스테퍼·마일스톤 체크리스트·통계 스트립), 모바일 1열/데스크탑 2열 반응형
+- **피드백**: GitHub Discussions 링크(스레드 #1/#2 생성됨), 카드별 CTA 버튼
+- **검증**: 파서 24/24 · 스키마 22/22 통과, 시크릿 누출 0건(클라이언트엔 공개 안전값만)
+- **남은 선택 작업**: ① 프로젝트 push 즉시 반영 원하면 `_for-project-repos/notify-dashboard.yml` 설치 + `DASHBOARD_DISPATCH_TOKEN` 등록 ② 익명 피드백 원하면 Supabase 연결
