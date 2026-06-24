@@ -24,8 +24,8 @@
 
     /* ---- 페이지 헤더 (노션 페이지 타이틀 느낌) ---- */
     .page{max-width:1160px;margin:0 auto;padding:0 22px 60px}
-    .topbar{display:flex;align-items:center;padding:16px 0 10px}
-    .brand{height:26px;width:auto;display:block}
+    .head-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{height:26px;width:auto;display:block;flex:0 0 auto}
     .cover{height:120px;border-radius:0 0 var(--radius) var(--radius);
       background:linear-gradient(120deg,#f7f6f3 0%,#efece6 50%,#f3eef6 100%);
       margin:0 -22px 0;}
@@ -177,10 +177,12 @@
 </head>
 <body>
   <div class="page">
-    <div class="topbar"><img class="brand" src="./logo.png" alt="NEXYS — New Experiment System" /></div>
     <div class="cover"></div>
     <div class="page-head">
-      <div class="page-emoji">🛠️</div>
+      <div class="head-top">
+        <div class="page-emoji">🛠️</div>
+        <img class="brand" src="./logo.png" alt="NEXYS — New Experiment System" />
+      </div>
       <h1 class="page-title">개발 진행 대시보드</h1>
       <p class="page-desc">두 개발 프로젝트의 진행 상황을 Log.md 기반으로 집계하고, 팀과 실시간 피드백을 주고받습니다.</p>
     </div>
