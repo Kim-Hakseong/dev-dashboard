@@ -26,10 +26,9 @@
     .page{max-width:1160px;margin:0 auto;padding:22px 22px 60px}
     .head-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{height:26px;width:auto;display:block;flex:0 0 auto}
-    .cover{height:120px;border-radius:var(--radius);
-      background:linear-gradient(120deg,#f7f6f3 0%,#efece6 50%,#f3eef6 100%);}
-    .page-head{margin-top:-44px;padding:0 4px 8px}
-    .page-emoji{font-size:56px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.06))}
+    .hero{background:linear-gradient(120deg,#f7f6f3 0%,#efece6 50%,#f3eef6 100%);
+      border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px 24px}
+    .page-emoji{font-size:46px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.06))}
     .page-title{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:10px 0 4px}
     .page-desc{color:var(--sub);font-size:15px;margin:0;max-width:680px}
 
@@ -176,15 +175,14 @@
 </head>
 <body>
   <div class="page">
-    <div class="cover"></div>
-    <div class="page-head">
+    <header class="hero">
       <div class="head-top">
         <div class="page-emoji">🛠️</div>
         <img class="brand" src="./logo.png" alt="NEXYS — New Experiment System" />
       </div>
       <h1 class="page-title">개발 진행 대시보드</h1>
       <p class="page-desc">두 개발 프로젝트의 진행 상황을 Log.md 기반으로 집계하고, 팀과 실시간 피드백을 주고받습니다.</p>
-    </div>
+    </header>
 
     <section class="stats" id="stats"></section>
     <div id="status"></div>
