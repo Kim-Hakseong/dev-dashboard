@@ -32,3 +32,6 @@
 - **피드백**: GitHub Discussions 링크(스레드 #1/#2 생성됨), 카드별 CTA 버튼
 - **검증**: 파서 24/24 · 스키마 22/22 통과, 시크릿 누출 0건(클라이언트엔 공개 안전값만)
 - **남은 선택 작업**: ① 프로젝트 push 즉시 반영 원하면 `_for-project-repos/notify-dashboard.yml` 설치 + `DASHBOARD_DISPATCH_TOKEN` 등록 ② 익명 피드백 원하면 Supabase 연결
+
+## 2026-06-24
+- 좌측 상단 NEXYS 브랜드 로고 추가: etc/image001.png → public/logo.png, 페이지 상단 브랜드 바(.topbar)에 좌측 정렬 배치

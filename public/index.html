@@ -24,6 +24,8 @@
 
     /* ---- 페이지 헤더 (노션 페이지 타이틀 느낌) ---- */
     .page{max-width:1160px;margin:0 auto;padding:0 22px 60px}
+    .topbar{display:flex;align-items:center;padding:16px 0 10px}
+    .brand{height:26px;width:auto;display:block}
     .cover{height:120px;border-radius:0 0 var(--radius) var(--radius);
       background:linear-gradient(120deg,#f7f6f3 0%,#efece6 50%,#f3eef6 100%);
       margin:0 -22px 0;}
@@ -175,6 +177,7 @@
 </head>
 <body>
   <div class="page">
+    <div class="topbar"><img class="brand" src="./logo.png" alt="NEXYS — New Experiment System" /></div>
     <div class="cover"></div>
     <div class="page-head">
       <div class="page-emoji">🛠️</div>
