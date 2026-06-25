@@ -40,3 +40,4 @@
 - 헤더를 hero 카드로 재구성: 둥근 사각형 안에 [🛠️ 아이콘+NEXYS 로고 행] + 제목 + 설명을 모두 포함(이전엔 빈 커버 아래에 분리돼 있었음)
 - 즉시 동기화(2026-06-25): 진단 결과 연동 정상이나 cron 지연(실제 1.5~3h)으로 최신 커밋 반영 지연. 수동 재빌드로 즉시 따라잡음. 항구 해결로 notify-dashboard.yml(토큰 미설정 시 스킵하도록 보강)을 nexys/flight-sim2 두 repo의 .github/workflows에 설치 → push 시 repository_dispatch로 대시보드 즉시 재빌드. 남은 건 DASHBOARD_DISPATCH_TOKEN(PAT) 등록뿐
 - 즉시 동기화 검증 완료(2026-06-25): DASHBOARD_DISPATCH_TOKEN 등록 후 두 프로젝트 notify 워크플로 재실행 → 각각 dev-dashboard에 repository_dispatch 빌드 자동 트리거 + 배포 success 확인. 이제 nexys/flight-sim2 push 시 ~30초~1분 내 대시보드 자동 갱신(cron */15는 백업으로 유지)
+- flight-sim2 개요 누락 수정(2026-06-25): 어제 "GCS-first reset" 커밋이 Log.md를 통째로 재작성하며 frontmatter 유실 → summary='' 기획 0%로 표시됨. 새 방향(MAVLink GCS 루프)에 맞춰 frontmatter+마일스톤(M0~M3 done/M4 예정)+날짜 재추가. push가 즉시 동기화(notify→dispatch)를 실제로 트리거해 대시보드 자동 갱신 확인 → Flight Sim2 = MVP 55%, 개요 표시됨
